@@ -1,18 +1,17 @@
-#!/bin/bash -i
-#
-# Need to install "dialog" before first execution
-# sudo apt-get install dialog
+#!/bin/bash
 #
 #
+#
+
 
 while true
 do
         rm -f findings.txt
 
-	CHOICE=$(dialog --clear \
+	CHOICE=$(whiptail --clear \
 			--backtitle "Search Lastline Mail Logs" \
 			--title "Search Mail Logs" \
-                        --cancel-label "Exit" \
+                        --cancel-button "Exit" \
 			--menu "Choose one of the following options:" \
 			20 60 8 \
                         SearchSender "Search for sender address" \
@@ -28,13 +27,12 @@ do
 	clear
 	case $CHOICE in
 	    SearchSender)
-	    MAILADDRESS=$(dialog --title "Search for sender address" \
+	    MAILADDRESS=$(whiptail --title "Search for sender address" \
 		--backtitle "Search for sender address" \
-		--inputbox "Enter email address " 8 60 --output-fd 1) 
-            
+		--inputbox "Enter email address " 8 60 3>&1 1>&2 2>&3 ) 
 
 	    if [[ $MAILADDRESS =~ $VALIDMAILREGEX ]] ; then 
-	       OUTPUT=$(zgrep "from='$MAILADDRESS" /var/log/llmail/email/SmtpReceiver.0.email.log | cut -d' ' -f4)
+	       OUTPUT=$(zgrep "from='$MAILADDRESS" /var/log/llmail/email/SmtpReceiver.0.email.log* | cut -d' ' -f4)
 	       for x in $OUTPUT; do 
 		   echo >> findings.txt 
 		   echo "###### Searching in mail addresses for '$MAILADDRESS' and message id $x" >> findings.txt
@@ -42,54 +40,50 @@ do
 	       done;
 
 	       if [ "$OUTPUT" == '' ]; then
-		   dialog --backtitle "Search for sender address" \
+		   whiptail --backtitle "Search for sender address" \
 			  --title "Search for sender address" \
 			  --msgbox 'No results ...' 10 40
 	        else
-         		dialog --textbox findings.txt -1 -1
+         		whiptail --textbox --scrolltext findings.txt `stty size`
 	       fi
 	    else
-	       if [ "$OUTPUT" == '' ]; then
-		   dialog --backtitle "Search for sender address" \
+		   whiptail --backtitle "Search for sender address" \
 			  --title "Search for sender address" \
 			  --msgbox 'Invalid mail address ...' 10 40
-	       fi
 	    fi
 	    ;;
 
 	    SearchRecipient)
-	    MAILADDRESS=$(dialog --title "Search for recipient address" \
-		--backtitle "Search for recipient address" \
-		--inputbox "Enter email address " 8 60 --output-fd 1)
+            MAILADDRESS=$(whiptail --title "Search for recipient address" \
+                --backtitle "Search for recipient address" \
+                --inputbox "Enter email address " 8 60 3>&1 1>&2 2>&3 )
 
-	    if [[ $MAILADDRESS =~ $VALIDMAILREGEX ]] ; then
-	       OUTPUT=$(zgrep "to='$MAILADDRESS" /var/log/llmail/email/SmtpReceiver.0.email.log | cut -d' ' -f4)
-	       for x in $OUTPUT; do
-		   echo >> findings.txt
-		   echo "###### Searching in recipient addresses for '$MAILADDRESS' and message id $x" >> findings.txt
-		   zgrep -h "$x" /var/log/llmail/email/* | sort >> findings.txt
-	       done;
+            if [[ $MAILADDRESS =~ $VALIDMAILREGEX ]] ; then
+               OUTPUT=$(zgrep "to='$MAILADDRESS" /var/log/llmail/email/SmtpReceiver.0.email.log* | cut -d' ' -f4)
+               for x in $OUTPUT; do
+                   echo >> findings.txt
+                   echo "###### Searching in mail addresses for '$MAILADDRESS' and message id $x" >> findings.txt
+                   zgrep -h "$x" /var/log/llmail/email/* | sort >> findings.txt
+               done;
 
-	       if [ "$OUTPUT" == '' ]; then
-		   dialog --backtitle "Search for recipient address" \
-			  --title "Search for recipient address" \
-			  --msgbox 'No results ...' 10 40
+               if [ "$OUTPUT" == '' ]; then
+                   whiptail --backtitle "Search for recipient address" \
+                          --title "Search for recipient address" \
+                          --msgbox 'No results ...' 10 40
                 else
-                        dialog --textbox findings.txt -1 -1
-	       fi
-	    else
-	       if [ "$OUTPUT" == '' ]; then
-		   dialog --backtitle "Search for recipient address" \
-			  --title "Search for recipient address" \
-			  --msgbox 'Invalid mail address ...' 10 40
-	       fi
-	    fi
-	    ;;
+                        whiptail --textbox --scrolltext findings.txt `stty size`
+               fi
+            else
+                   whiptail --backtitle "Search for recipient address" \
+                          --title "Search for recipient address" \
+                          --msgbox 'Invalid mail address ...' 10 40
+            fi
+            ;;
 
 	    SearchSubject)
-	    SUBJECT=$(dialog --title "Search for mail subject" \
+	    SUBJECT=$(whiptail --title "Search for mail subject" \
 		--backtitle "Search for mail subject" \
-		--inputbox "Enter mail subject " 8 60 --output-fd 1)
+		--inputbox "Enter mail subject " 8 60 3>&1 1>&2 2>&3 )
 
             
 	    OUTPUT=$(grep "subject='$SUBJECT" /var/log/llmail/email/Analyzer.0.email.log | cut -d' ' -f4)
@@ -100,22 +94,29 @@ do
 	    done; 
 
 	    if [ "$OUTPUT" == '' ]; then
-		dialog --backtitle "Search for mail subject" \
+		whiptail --backtitle "Search for mail subject" \
 		       --title "Search for mail subject" \
 		       --msgbox 'No results ...' 10 40
             else
-                dialog --textbox findings.txt -1 -1 
+                whiptail --textbox --scrolltext findings.txt `stty size`
 	    fi
 	    ;;
 
 	    SearchFree)
-	    FREETEXT=$(dialog --title "Search for free text" \
+	    FREETEXT=$(whiptail --title "Search for free text" \
 		--backtitle "Search for free text" \
-		--inputbox "Enter free text " 8 60 --output-fd 1)
+		--inputbox "Enter free text " 8 60 3>&1 1>&2 2>&3)
             
-            zgrep "$FREETEXT" /var/log/llmail/email/* >>findings.txt
-            dialog --textbox findings.txt -1 -1
-            
+            OUTPUT=$(zgrep "$FREETEXT" /var/log/llmail/email/*)
+            if [ "$OUTPUT" == '' ]; then
+                whiptail --backtitle "Search for mail subject" \
+                       --title "Search for mail subject" \
+                       --msgbox 'No results ...' 10 40
+            else
+                echo $OUTPUT >> findings.txt
+                whiptail --textbox --scrolltext findings.txt `stty size`
+            fi 
 	    ;;
 	esac
 done
+
