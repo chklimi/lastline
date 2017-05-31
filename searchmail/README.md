@@ -1,5 +1,6 @@
-# Lastline Search Mail Log
+## Lastline Search Mail Log
 
+#searchmail.sh
 Normally you don't know the message id when searching for mail, instead you know an email address or the subject. 
 The scripts here will help you when searching for information.
 
@@ -11,6 +12,7 @@ Then start the script with
 
 Everything else is menu driven and the output is sorted by date and time.
 
+# searchaddress.sh and searchsubject.sh
 Earlier used test scripts:
 Search for an email address (to or from) and report all entries based on the message ID:
 
