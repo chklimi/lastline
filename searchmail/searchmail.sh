@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#
+# Created by Dirk Beste, dbeste@lastline.com or dirk.beste@gmail.com
 #
 
 
