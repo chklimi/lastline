@@ -4,28 +4,25 @@ Normally you don't know the message id when searching for mail, instead you know
 The scripts here will help you when searching for information.
 
 
-Just put this in the home directory of the monitoring user. Before running it the first time, make sure you install the dialog command
-
-    sudo apt-get install dialog
-
+Just put this in the home directory of the monitoring user. 
 Then start the script with
 
     bash searchmail.sh
 
 Everything else is menu driven and the output is sorted by date and time.
 
-Early used test scripts:
+Earlier used test scripts:
 Search for an email address (to or from) and report all entries based on the message ID:
 
-output=$(grep "$1"  /var/log/llmail/email/SmtpReceiver.0.email.log | cut -d' ' -f4)
-for x in $output; do echo; echo "###### Searching in mail addresses for '$1' and message id $x"; grep "$x" /var/log/llmail/email/* ;  done; 
+    output=$(grep "$1"  /var/log/llmail/email/SmtpReceiver.0.email.log | cut -d' ' -f4)
+    for x in $output; do echo; echo "###### Searching in mail addresses for '$1' and message id $x"; grep "$x" /var/log/llmail/email/* ;  done; 
 
 Save file as searchaddress.sh in the monitoring users home directory.
 
 Search for subject and report all entries based on the message ID:
 
-output=$(grep "$1" /var/log/llmail/email/Analyzer.0.email.log | cut -d' ' -f4)
-for x in $output; do echo; echo "###### Searching in subject for '$1' and message id $x"; grep $x /var/log/llmail/email/* ;  done; 
+    output=$(grep "$1" /var/log/llmail/email/Analyzer.0.email.log | cut -d' ' -f4)
+    for x in $output; do echo; echo "###### Searching in subject for '$1' and message id $x"; grep $x /var/log/llmail/email/* ;  done; 
 
 Save file as searchsubject.sh in the monitoring users home directory.
 
