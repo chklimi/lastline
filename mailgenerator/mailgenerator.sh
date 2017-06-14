@@ -96,17 +96,17 @@ numberofsamples=10
 #
 
 # Download n documents from Virustotal
-$python $vtdownload -n $numberofsamples size:5MB- tag:spam-email positives:5+
+#$python $vtdownload -n $numberofsamples size:5MB- tag:spam-email positives:5+
 
 
 # Download n documents from Virustotal
-#$python $vtdownload -n $numberofsamples size:5MB- type:document positives:5+
+$python $vtdownload -n $numberofsamples size:5MB- type:document positives:5+
 
 # Download n Executables from Virustotal
-#$python $vtdownload -n $numberofsamples size:5MB- type:pdf positives:5+
+$python $vtdownload -n $numberofsamples size:5MB- type:pdf positives:5+
 
 # Download n Executables from Virustotal
-#$python $vtdownload -n $numberofsamples size:5MB- type:executable positives:5+
+$python $vtdownload -n $numberofsamples size:5MB- type:executable positives:5+
 
 echo `date "+%Y-%m-%d %H:%M:%S"`" INFO     Deleteing $malwaredir/intelligence-query.txt"
 rm -f $malwaredir/intelligence-query.txt
